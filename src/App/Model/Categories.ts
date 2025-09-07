@@ -5,6 +5,7 @@ import { ICategories } from '~/interfaces/ModelDatabase';
 
 const CategoriesSchema: Schema = new Schema(
     {
+        code: { type: String, require: true, unique: true },
         name: { type: String, required: true },
         description: { type: String },
         thumbnail: {

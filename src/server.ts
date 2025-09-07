@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 import connectDatabase from '~/Config/database/connectDB';
+import routers from '~/Router';
 
 const app = express();
 const port = process.env.PORT_SERVER;
@@ -29,6 +30,9 @@ app.get('/', (req, res) => {
 
 // cros
 app.use(cors());
+
+// router
+routers(app);
 
 app.listen(port, () => {
     console.log(`Example app listening on http://localhost:${port}/`);
