@@ -31,8 +31,8 @@ export interface IProducts extends Document {
         image_url: string | null;
         public_id: string | null;
     }[];
-    isDeleted: boolean | null;
     brand: string;
+    isDeleted: boolean | null;
     createdAt: Date;
     updatedAt: Date;
     deleted?: boolean;

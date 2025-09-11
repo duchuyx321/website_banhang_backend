@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
-import CategoriesController from '~/App/Controller/Admin/CategoriesController';
-import uploadMemoryFile from '~/App/Middleware/uploadMemoryFile';
-import { uploadFileCloudinary } from '~/App/Middleware/UploadFileCloudinary';
+import CategoriesController from '~/App/Controller/Admin/Categories.controller';
+import uploadMemoryFile from '~/App/Middleware/uploadMemoryFile.middleware';
+import { uploadFileCloudinary } from '~/App/Middleware/UploadFileCloudinary.middleware';
 
 const router = Router();
 

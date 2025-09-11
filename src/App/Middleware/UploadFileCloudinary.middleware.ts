@@ -1,4 +1,4 @@
-import cloudinary from '~/Config/Cloudinary/connectCloudinary';
+import cloudinary from '~/Config/Cloudinary/connectCloudinary.config';
 import streamifier from 'streamifier';
 import { RouteHandler } from '~/interfaces/express';
 

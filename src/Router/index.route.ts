@@ -1,5 +1,5 @@
 import { Application } from 'express';
-import admin from '~/Router/admin';
+import admin from '~/Router/admin.route';
 const routers = (app: Application) => {
     // router user
     // router admin

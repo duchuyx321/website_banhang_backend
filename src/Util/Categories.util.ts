@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import Categories from '~/App/Model/Categories';
+import Categories from '~/App/Model/Categories.model';
 
 export const getCategoryTree = async () => {
     try {

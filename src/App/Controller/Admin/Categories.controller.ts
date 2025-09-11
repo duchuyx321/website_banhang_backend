@@ -1,7 +1,7 @@
 import { RouteHandler } from '~/interfaces/express';
-import Categories from '~/App/Model/Categories';
-import { convertXlsxToJson } from '~/Util/XLSXUtil';
-import { getCategoryTree } from '~/Util/CategoriesUtil';
+import Categories from '~/App/Model/Categories.model';
+import { convertXlsxToJson, getValueByType } from '~/Util/XLSX.util';
+import { getCategoryTree } from '~/Util/Categories.util';
 
 class CategoriesController {
     // [GET] --/categories/
@@ -51,29 +51,16 @@ class CategoriesController {
                 unknown
             >[];
             const dataImport = rawData.map((item) => {
-                const code =
-                    typeof item['code'] === 'string' ? item['code'] : null;
-                const name =
-                    typeof item['name'] === 'string' ? item['name'] : null;
-                const description =
-                    typeof item['description'] === 'string'
-                        ? item['description']
-                        : null;
-                const image_url =
-                    typeof item['image_url'] === 'string'
-                        ? item['image_url']
-                        : null;
-                const public_id =
-                    typeof item['public_id'] === 'string'
-                        ? item['public_id']
-                        : null;
+                const image_url = getValueByType(item, 'image_url', 'string');
+                const public_id = getValueByType(item, 'public_id', 'string');
                 const thumbnail = { image_url, public_id };
-                const parent_id =
-                    typeof item['parent_id'] === 'string'
-                        ? item['parent_id']
-                        : null;
-
-                return { code, name, description, thumbnail, parent_id };
+                return {
+                    code: getValueByType(item, 'code', 'string'),
+                    name: getValueByType(item, 'name', 'string'),
+                    description: getValueByType(item, 'description', 'string'),
+                    thumbnail,
+                    parent_id: getValueByType(item, 'parent_id', 'string'),
+                };
             });
             await Categories.insertMany(dataImport);
             return res.status(200).json({

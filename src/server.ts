@@ -5,8 +5,8 @@ import cookie_parser from 'cookie-parser';
 import dotenv from 'dotenv';
 
 dotenv.config();
-import connectDatabase from '~/Config/database/connectDB';
-import routers from '~/Router';
+import connectDatabase from '~/Config/database/connectDB.config';
+import routers from '~/Router/index.route';
 
 const app = express();
 const port = process.env.PORT_SERVER;
