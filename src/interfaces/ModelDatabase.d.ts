@@ -33,7 +33,7 @@ export interface IProducts extends Document {
         public_id: string;
     }[];
     brand: string;
-    isDeleted: boolean | null;
+    isDeleted: boolean;
     createdAt: Date;
     updatedAt: Date;
     deleted?: boolean;
