@@ -23,10 +23,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // file tĩnh
 
-app.get('/', (req, res) => {
-    res.send('Hello World! đang test dự án nè');
-});
-
 // cros
 app.use(cors());
 

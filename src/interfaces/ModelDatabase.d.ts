@@ -26,13 +26,14 @@ export interface IProducts extends Document {
     _id: Schema.Types.ObjectId;
     category_id: Schema.Types.ObjectId;
     name: string;
-    description: string | null;
-    thumbnail?: {
-        image_url: string | null;
-        public_id: string | null;
+    description: string;
+    mainImage: number;
+    thumbnail: {
+        image_url: string;
+        public_id: string;
     }[];
-    isDeleted: boolean | null;
     brand: string;
+    isDeleted: boolean | null;
     createdAt: Date;
     updatedAt: Date;
     deleted?: boolean;
@@ -44,20 +45,45 @@ export interface IProducts extends Document {
 export interface ICategories extends Document {
     _id: Schema.Types.ObjectId;
     name: string;
-    description: string | null;
+    description: string;
     thumbnail: {
-        image_url: string | null;
-        public_id: string | null;
+        image_url: string;
+        public_id: string;
     };
-    parent_id: string | null;
-    slug: string | null;
+    parent_id: string;
+    slug: string;
     createdAt: Date;
     updatedAt: Date;
     deleted?: boolean;
     deletedAt?: Date;
     deletedBy?: Schema.Types.ObjectId;
 }
-
+// CategoriesStats mongodb
+export interface ICategoriesStats extends Document {
+    category_id: Schema.Types.ObjectId;
+    total_products: number; // Số lượng sản phẩm trong danh mục
+    total_orders: number; // Tổng số đơn hàng đã bán
+    total_sales: number; // Doanh thu (tiền)
+    total_views: number; // Tổng lượt xem sản phẩm
+    total_searches: number; // Tổng số lượt tìm kiếm liên quan
+    createdAt: Date;
+    updatedAt: Date;
+    deleted?: boolean;
+    deletedAt?: Date;
+    deletedBy?: Schema.Types.ObjectId;
+}
+// CategoriesAIInsights mongodb
+export interface ICategoriesAIInsights extends Document {
+    category_id: Schema.Types.ObjectId; // Liên kết tới Categories
+    hot_score: number; // Điểm "nóng" do AI tính
+    trend: string | 'stable'; // Xu hướng
+    forecast_sales_next_7d: number; // Dự báo doanh thu 7 ngày tới
+    createdAt: Date;
+    updatedAt: Date;
+    deleted?: boolean;
+    deletedAt?: Date;
+    deletedBy?: Schema.Types.ObjectId;
+}
 // Variants mongodb
 export interface IVariants extends Document {
     _id: Schema.Types.ObjectId;
@@ -81,6 +107,35 @@ export interface IInventories extends Document {
     variant_id: Schema.Types.ObjectId;
     stock: number;
     sold: number;
+    createdAt: Date;
+    updatedAt: Date;
+    deleted?: boolean;
+    deletedAt?: Date;
+    deletedBy?: Schema.Types.ObjectId;
+}
+// Products Stats mongodb
+export interface IProductsStats extends Document {
+    product_id: Schema.Types.ObjectId;
+    total_views: number; // lượt xem
+    total_clicks: number; // click vào detail
+    total_add_to_cart: number; // thêm vào giỏ
+    total_orders: number; // số đơn hàng
+    total_sales: number; // doanh thu (VND)
+    total_wishlist: number; // số lần yêu thích
+    total_returns: number; // số lần trả hàng (optional)
+    createdAt: Date;
+    updatedAt: Date;
+    deleted?: boolean;
+    deletedAt?: Date;
+    deletedBy?: Schema.Types.ObjectId;
+}
+// Products AIInsights mongodb
+export interface IProductsAIInsights extends Document {
+    product_id: Schema.Types.ObjectId;
+    hot_score: number; // điểm hot theo views, sold, search
+    trend: string;
+    forecast_sales_next_7d: number; // dự báo doanh thu 7 ngày
+    conversion_rate: number; // tỉ lệ mua/view
     createdAt: Date;
     updatedAt: Date;
     deleted?: boolean;
