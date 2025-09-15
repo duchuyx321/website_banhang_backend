@@ -10,7 +10,7 @@ const CartItemsSchema: Schema = new Schema(
         quantity: { type: Number, required: true },
         subtotal: { type: Number, required: true },
     },
-    { timestamps: true },
+    { timestamps: true, collection: 'cartItem' },
 );
 // plugin
 CartItemsSchema.plugin(MongooseDelete, {
