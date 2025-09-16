@@ -1,9 +1,9 @@
-import express from 'express';
+import { Router } from 'express';
 
 import PublicController from '~/App/Controller/Public.controller';
-const router = express.Router();
+const router = Router();
 // [GET]
-router.get('/', PublicController.wellcome);
 router.get('/home', PublicController.getListHome);
+router.get('/', PublicController.wellcome);
 
 export default router;

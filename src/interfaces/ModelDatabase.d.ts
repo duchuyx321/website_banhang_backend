@@ -44,6 +44,7 @@ export interface IProducts extends Document {
 //  Categories mongodb
 export interface ICategories extends Document {
     _id: Schema.Types.ObjectId;
+    code: string;
     name: string;
     description: string;
     thumbnail: {

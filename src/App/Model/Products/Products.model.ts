@@ -16,7 +16,11 @@ const ProductsSchema: Schema = new Schema(
         ],
         isdeleted: { type: Boolean },
         brand: { type: String, required: true },
-        category_id: { type: Schema.Types.ObjectId, required: true },
+        category_id: {
+            type: Schema.Types.ObjectId,
+            ref: 'Categories',
+            required: true,
+        },
         slug: { type: String, slug: 'name' },
     },
     { timestamps: true },

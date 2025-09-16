@@ -1,5 +1,6 @@
 import { RouteHandler } from '~/interfaces/express';
 import CategoriesService from '~/Service/Categories.service';
+import ProductsService from '~/Service/Products.service';
 
 import { getCategoryTree } from '~/Util/Categories.util';
 
@@ -35,6 +36,10 @@ class PublicController {
                 for (const slug of partProductSet) {
                     if (!slug) continue;
                     //  lấy dữ liệu product lấy các dữ liệu hot của product
+                    const productHot =
+                        await ProductsService.getProductHot(slug);
+
+                    result[slug] = productHot;
                 }
             }
             return res.status(200).json({ data: result });
