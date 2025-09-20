@@ -1,6 +1,11 @@
 import { Application } from 'express';
+
+// route
 import adminRoute from '~/Router/admin.route';
 import publicRoute from '~/Router/public.route';
+import authRoute from '~/Router/auth.route';
+
+// middleware
 import AuthMiddleware from '~/App/Middleware/Auth.middleware';
 const routers = (app: Application) => {
     // router user
@@ -11,6 +16,7 @@ const routers = (app: Application) => {
         adminRoute,
     );
     // router auth
+    app.use('/auth', authRoute);
     // router public
     app.use('/', AuthMiddleware.verifyTokenNotRequired, publicRoute);
 };
