@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
+
 export type RouteHandler = (
     req: Request,
     res: Response,

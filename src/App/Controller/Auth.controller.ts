@@ -1,4 +1,8 @@
-import { RouteHandler } from '~/interfaces/express';
+import {
+    dataDecodeJwt,
+    methodRequest,
+    RouteHandler,
+} from '~/interfaces/express';
 import User from '~/App/Model/User';
 import { comparePassword, hashPass } from '~/Util/Crypto.util';
 import {
@@ -8,6 +12,7 @@ import {
 } from '~/Util/JwtToken.util';
 import { validateRegister } from '~/Util/validation.util';
 import TokenService from '~/Service/Token.service';
+import { deleteFileCloudinary } from '../Middleware/UploadFileCloudinary.middleware';
 
 class AuthController {
     // -- [POST] -- /auth/login
@@ -18,7 +23,7 @@ class AuthController {
 
             if (!identifier || !pass) {
                 return res
-                    .status(402)
+                    .status(400)
                     .json({ error: 'Incomplete data upload!' });
             }
             // kiểm tra thông thông tin người dùng
@@ -30,7 +35,7 @@ class AuthController {
                 .lean();
 
             if (!checkUser)
-                return res.status(404).json({ error: 'user does not exist!' });
+                return res.status(401).json({ error: 'user does not exist!' });
 
             // kiểm tra mật khẩu
             const isCorrectPass = await comparePassword(
@@ -38,7 +43,7 @@ class AuthController {
                 checkUser.password,
             );
             if (!isCorrectPass)
-                return res.status(402).json({ error: 'wrong password!' });
+                return res.status(401).json({ error: 'wrong password!' });
 
             // cấp phiên đăng nhập
             const profile = {
@@ -72,19 +77,23 @@ class AuthController {
         try {
             const { error } = validateRegister(req.body);
             if (error) {
+                if (req.body.thumbnail?.public_id) {
+                    await deleteFileCloudinary(req.body.thumbnail?.public_id);
+                }
                 return res
-                    .status(403)
+                    .status(401)
                     .json({ error: error.details.map((d) => d.message) });
             }
-            const { username, email, avatar, first_name, last_name } = req.body;
+            const { username, email, thumbnail, first_name, last_name } =
+                req.body;
             const pass = req.body.password;
             // hashpass
-            const saltPass = hashPass(pass);
+            const saltPass = await hashPass(pass);
             // lưu thông tin người dùng
             const newUser = new User({
                 username,
                 email,
-                avatar,
+                avatar: thumbnail,
                 password: saltPass,
                 first_name,
                 last_name,
@@ -101,7 +110,7 @@ class AuthController {
             res.cookie('RefreshToken', RefreshToken, setTokenInCookie());
             await TokenService.addToken(RefreshToken, newUser._id);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { password, ...other } = newUser;
+            const { password, ...other } = newUser.toObject();
             return res.status(200).json({
                 data: {
                     other,
@@ -110,6 +119,28 @@ class AuthController {
                     },
                 },
             });
+        } catch (error) {
+            if (req.body.thumbnail?.public_id) {
+                await deleteFileCloudinary(req.body.thumbnail?.public_id);
+            }
+            console.log(error);
+            return res.status(500).json({ error: (error as Error).message });
+        }
+    };
+    // -- [POST] --/auth/refresh
+    refresh: RouteHandler = async (req: methodRequest, res) => {
+        try {
+            const user = req.user as dataDecodeJwt;
+            const profile = {
+                user_id: user.user_id,
+                role: user.role,
+            };
+            const AccessToken = newAccessToken(profile);
+            const RefreshToken = newRefreshToken(profile, user.exp);
+            res.cookie('RefreshToken', RefreshToken, setTokenInCookie());
+            // lưu token vào trong db
+            await TokenService.addToken(RefreshToken, user.user_id);
+            return res.status(200).json({ data: { meta: { AccessToken } } });
         } catch (error) {
             console.log(error);
             return res.status(500).json({ error: (error as Error).message });

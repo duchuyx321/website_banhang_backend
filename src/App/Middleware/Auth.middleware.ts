@@ -6,6 +6,7 @@ import {
     RouteHandler,
 } from '~/interfaces/express';
 import UserService from '~/Service/User.service';
+import TokenService from '~/Service/Token.service';
 dotenv.config();
 class AuthMiddleware {
     // verify accesstoken
@@ -105,5 +106,36 @@ class AuthMiddleware {
         };
 
     // verify refresh token
+    verifyRefreshToken: RouteHandler = async (
+        req: methodRequest,
+        res,
+        next,
+    ) => {
+        try {
+            let refreshToken = req.cookies.RefreshToken as string;
+            if (!refreshToken) {
+                return res.status(401).json({ error: 'Please log in!' });
+            }
+            refreshToken = TokenService.cleanToken(refreshToken);
+            const dataDecodeJwt: dataDecodeJwt = await this.verifyJwt(
+                refreshToken,
+                process.env.REFERESHTOKEN as string,
+            );
+            await TokenService.findToken(refreshToken, dataDecodeJwt.user_id);
+            // kiểm tra người dùng có tồn tại hay không
+            const checkUser = UserService.findUser(
+                dataDecodeJwt.user_id,
+                dataDecodeJwt.role,
+            );
+            if (!checkUser) {
+                return res.status(404).json({ error: 'user does not exist!' });
+            }
+            req.user = dataDecodeJwt;
+            return next();
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error: (error as Error).message });
+        }
+    };
 }
 export default new AuthMiddleware();

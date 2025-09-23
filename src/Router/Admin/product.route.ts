@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import ProductController from '~/App/Controller/Admin/Product.controller';
-import { uploadFilesCloudinary } from '~/App/Middleware/UploadFileCloudinary.middleware';
+import { uploadFileMultipleCloudinary } from '~/App/Middleware/UploadFileCloudinary.middleware';
 import uploadMemoryFile from '~/App/Middleware/uploadMemoryFile.middleware';
 
 const router = Router();
@@ -12,7 +12,7 @@ router.get('/', ProductController.getListProducts);
 router.post(
     '/add',
     uploadMemoryFile.array('files', 5),
-    uploadFilesCloudinary('Products'),
+    uploadFileMultipleCloudinary('Products'),
     ProductController.addProduct,
 );
 router.post(

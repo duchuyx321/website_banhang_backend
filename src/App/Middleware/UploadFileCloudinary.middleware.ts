@@ -8,7 +8,9 @@ const uploadFileCloudinary = (folder: string): RouteHandler => {
         const stream = cloudinary.uploader.upload_stream(
             { folder },
             (error, result) => {
-                if (error) return next(error);
+                if (error) {
+                    return next(error);
+                }
 
                 // add result body
                 req.body.thumbnail = {
@@ -21,7 +23,7 @@ const uploadFileCloudinary = (folder: string): RouteHandler => {
         streamifier.createReadStream(req.file.buffer).pipe(stream);
     };
 };
-const uploadFilesCloudinary = (folder: string): RouteHandler => {
+const uploadFileMultipleCloudinary = (folder: string): RouteHandler => {
     return (req, res, next) => {
         const files = req.files;
 
@@ -64,7 +66,9 @@ const deleteFileCloudinary = async (public_id: string): Promise<void> => {
     await cloudinary.uploader.destroy(public_id);
 };
 
-const deleteFilesCloudinary = async (public_ids: string[]): Promise<void> => {
+const deleteFileMultipleCloudinary = async (
+    public_ids: string[],
+): Promise<void> => {
     if (!public_ids.length) return;
 
     await Promise.all(public_ids.map((id) => cloudinary.uploader.destroy(id)));
@@ -72,7 +76,7 @@ const deleteFilesCloudinary = async (public_ids: string[]): Promise<void> => {
 
 export {
     uploadFileCloudinary,
-    uploadFilesCloudinary,
+    uploadFileMultipleCloudinary,
     deleteFileCloudinary,
-    deleteFilesCloudinary,
+    deleteFileMultipleCloudinary,
 };
