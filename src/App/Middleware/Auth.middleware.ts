@@ -121,7 +121,15 @@ class AuthMiddleware {
                 refreshToken,
                 process.env.REFERESHTOKEN as string,
             );
-            await TokenService.findToken(refreshToken, dataDecodeJwt.user_id);
+            const checkToken = await TokenService.findToken(
+                refreshToken,
+                dataDecodeJwt.user_id,
+            );
+            if (checkToken.status !== 200) {
+                return res
+                    .status(checkToken.status)
+                    .json({ error: checkToken.error });
+            }
             // kiểm tra người dùng có tồn tại hay không
             const checkUser = UserService.findUser(
                 dataDecodeJwt.user_id,

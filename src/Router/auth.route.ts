@@ -19,5 +19,13 @@ router.post(
     AuthMiddleware.verifyRefreshToken,
     AuthController.refresh,
 );
+router.post(
+    '/logout',
+    AuthMiddleware.verifyTokenRequired,
+    AuthController.logout,
+);
+router.post('/forgot-pass', AuthController.forgotPass);
+router.post('/otp/email', AuthController.sendMailOTP);
+router.post('/reset-pass', AuthController.resetPassword);
 
 export default router;
