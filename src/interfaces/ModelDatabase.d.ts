@@ -33,6 +33,7 @@ export interface IProducts extends Document {
         public_id: string;
     }[];
     brand: string;
+    slug: string;
     isDeleted: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -44,6 +45,7 @@ export interface IProducts extends Document {
 //  Categories mongodb
 export interface ICategories extends Document {
     _id: Schema.Types.ObjectId;
+    code: string;
     name: string;
     description: string;
     thumbnail: {

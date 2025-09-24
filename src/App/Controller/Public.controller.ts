@@ -1,7 +1,11 @@
-import { RouteHandler } from '~/interfaces/express';
+import { methodRequest, RouteHandler } from '~/interfaces/express';
 import CategoriesService from '~/Service/Categories.service';
+import ProductsService from '~/Service/Products.service';
 
 import { getCategoryTree } from '~/Util/Categories.util';
+import ProductsModel from '~/App/Model/Products/Products.model';
+import Categories from '~/App/Model/Categories/Categories.model';
+import { IProducts } from '~/interfaces/ModelDatabase';
 
 class PublicController {
     // --[GET]--/
@@ -35,6 +39,10 @@ class PublicController {
                 for (const slug of partProductSet) {
                     if (!slug) continue;
                     //  lấy dữ liệu product lấy các dữ liệu hot của product
+                    const productHot =
+                        await ProductsService.getProductHot(slug);
+
+                    result[slug] = productHot;
                 }
             }
             return res.status(200).json({ data: result });
@@ -49,6 +57,34 @@ class PublicController {
         try {
             const data = await getCategoryTree();
             return res.status(200).json({ data });
+        } catch (error) {
+            return res.status(500).json({ error: (error as Error).message });
+        }
+    };
+    // -- [GET] -- /:slug
+    getProductDetail: RouteHandler = async (req: methodRequest, res) => {
+        try {
+            const user = req.user;
+            const { slug } = req.params;
+            if (user) {
+                //  thống kê sản phẩm theo AI mình cần thống kê
+            }
+            // lấy thông tin sản phẩm
+            const product: IProducts = await ProductsModel.findOne({
+                slug,
+            }).select(
+                'category_id name description mainImage thumbnail brand slug',
+            );
+            if (!product) {
+                return res.status(404).json({ error: 'product not found!' });
+            }
+            //  lấy category
+            const category = await Categories.findById(
+                product.category_id,
+            ).select('code name description thumbnail slug');
+            const data = { product, category };
+            return res.status(200).json({ data: data });
+            return;
         } catch (error) {
             return res.status(500).json({ error: (error as Error).message });
         }

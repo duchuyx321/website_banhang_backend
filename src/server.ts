@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 import connectDatabase from '~/Config/database/connectDB';
+import router from '~/Router/index.route';
 
 const app = express();
 const port = process.env.PORT_SERVER;
@@ -23,6 +24,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // file tĩnh
 
+// route
+router(app);
 // cros
 app.use(cors());
 
