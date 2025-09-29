@@ -14,7 +14,6 @@ const ProductsSchema: Schema = new Schema(
                 public_id: { type: String },
             },
         ],
-        isdeleted: { type: Boolean },
         brand: { type: String, required: true },
         category_id: {
             type: Schema.Types.ObjectId,

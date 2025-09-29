@@ -10,7 +10,10 @@ export const hashPass = async (password: string) => {
 };
 
 //  giải mã mật khẩu
-export const comparePassword = async (password: string, passHash: string) => {
+export const comparePassword = async (
+    password: string,
+    passHash: string,
+): Promise<boolean> => {
     return bcryptjs.compare(password, passHash);
 };
 

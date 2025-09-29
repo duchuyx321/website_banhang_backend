@@ -17,7 +17,7 @@ const registerSchema = Joi.object({
 export const validateRegister = (data: IUser) => {
     return registerSchema.validate(data, { abortEarly: false });
 };
-interface IData {
+export interface IData {
     username?: string;
     email?: string;
     password?: string;
@@ -28,6 +28,8 @@ interface IData {
         public_id?: string;
     };
     OTP?: string;
+    newPassword?: string;
+    confirmPassword?: string;
 }
 const dataCheck = Joi.object({
     username: Joi.string().min(6).max(20),
@@ -42,6 +44,8 @@ const dataCheck = Joi.object({
     first_name: Joi.string().min(3).max(20),
     last_name: Joi.string().min(3).max(20),
     OTP: Joi.string().length(6).allow(null),
+    newPassword: Joi.string().min(8),
+    confirmPassword: Joi.string().min(8),
 });
 export const validateValue = (data: IData) => {
     return dataCheck.validate(data, { abortEarly: false });

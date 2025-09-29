@@ -15,6 +15,7 @@ const VariantSchema: Schema = new Schema(
         SKU: { type: String, required: true, unique: true },
         variantable_weight: { type: String, required: true },
         variantable_unit: { type: String, required: true, enum: ['kg'] },
+        isMain: { type: Boolean, default: false },
     },
     { timestamps: true },
 );

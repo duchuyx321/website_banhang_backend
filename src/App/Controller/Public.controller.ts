@@ -1,4 +1,8 @@
-import { methodRequest, RouteHandler } from '~/interfaces/express';
+import {
+    dataDecodeJwt,
+    methodRequest,
+    RouteHandler,
+} from '~/interfaces/express';
 import CategoriesService from '~/Service/Categories.service';
 import ProductsService from '~/Service/Products.service';
 
@@ -6,6 +10,7 @@ import { getCategoryTree } from '~/Util/Categories.util';
 import ProductsModel from '~/App/Model/Products/Products.model';
 import Categories from '~/App/Model/Categories/Categories.model';
 import { IProducts } from '~/interfaces/ModelDatabase';
+import StatisticService from '~/Service/Statistic.service';
 
 class PublicController {
     // --[GET]--/
@@ -61,14 +66,34 @@ class PublicController {
             return res.status(500).json({ error: (error as Error).message });
         }
     };
+    // -- [GET] -- /products?page=1&limit=8
+    getListProductsFlowPage: RouteHandler = async (req: methodRequest, res) => {
+        try {
+            const user = req.user as dataDecodeJwt;
+            const page = Number.parseInt((req.body.page as string) || '1');
+            const limit = Number.parseInt((req.body.limit as string) || '12');
+            // nêu người dùng đã đăng nhập
+            // if (user) {
+            // }
+            //  lấy dữ liệu theo người dùng
+            const products = await StatisticService.getPersonalizedProducts(
+                user.user_id,
+                limit,
+                page,
+            );
+            return res.status(200).json({ data: products });
+            // lấy dữ liệu theo thống kê lượng sản phẩm thổng quát
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ error: (error as Error).message });
+        }
+    };
     // -- [GET] -- /:slug
     getProductDetail: RouteHandler = async (req: methodRequest, res) => {
         try {
-            const user = req.user;
+            const user = req.user as dataDecodeJwt;
             const { slug } = req.params;
-            if (user) {
-                //  thống kê sản phẩm theo AI mình cần thống kê
-            }
+
             // lấy thông tin sản phẩm
             const product: IProducts = await ProductsModel.findOne({
                 slug,
@@ -78,6 +103,13 @@ class PublicController {
             if (!product) {
                 return res.status(404).json({ error: 'product not found!' });
             }
+            //  thống kê sản phẩm theo AI mình cần thống kê
+            await StatisticService.addProductFlowAction(
+                user.user_id || '',
+                product._id,
+                product.category_id,
+                'click',
+            );
             //  lấy category
             const category = await Categories.findById(
                 product.category_id,
