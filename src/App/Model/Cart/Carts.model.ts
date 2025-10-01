@@ -6,8 +6,8 @@ const CartsSchema: Schema = new Schema(
     {
         cartable_items: [{ type: Schema.Types.ObjectId }],
         user_id: { type: Schema.Types.ObjectId, required: true, unique: true },
-        totalquantity: { type: Number },
-        totalprice: { type: Number },
+        totalquantity: { type: Number }, // số lượng sản phẩm trong giỏ hàng
+        totalprice: { type: Number }, // tổng tiền
     },
     { timestamps: true },
 );
